@@ -12,11 +12,11 @@ public interface BookService {
 
     BookDto  getBOokByTitle(String Id);
 
-    List<Book> getAllBooks();
+    List<BookDto> getAllBooks();
 
-    Book saveBook(BookDto bookDto);
+    BookDto saveBook(BookDto bookDto);
 
-    Book updateBook(BookDto bookDto);
+    BookDto updateBook(BookDto bookDto);
 
     String deleteBookByTitle(String title);
 
