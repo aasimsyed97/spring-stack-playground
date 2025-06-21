@@ -1,11 +1,13 @@
 package com.example.crud.model;
 
 
-import jakarta.persistence.*;
+
 import lombok.Data;
 
+import jakarta.persistence.*;
+
 @Entity
-@Table(name = "Bookes")
+@Table(name = "Books")
 @Data
 public class Book {
 

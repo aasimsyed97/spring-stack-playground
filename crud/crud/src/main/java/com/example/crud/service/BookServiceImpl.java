@@ -3,16 +3,20 @@ package com.example.crud.service;
 import com.example.crud.dto.BookDto;
 import com.example.crud.model.Book;
 import com.example.crud.repository.BookRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
 
+@Service
 public class BookServiceImpl implements BookService{
 
-     BookRepository bookRepository;
+    private final BookRepository bookRepository;
+
     BookServiceImpl(BookRepository bookRepository){
+        this.bookRepository = bookRepository;
     }
      
 
@@ -43,8 +47,9 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public BookDto updateBook(BookDto bookDto) {
-        Book book = new Book();
+        Book book = bookRepository.findByTitle(bookDto.getTitle());
         copyProperties(bookDto, book);
+        System.out.println(book);
          bookRepository.save(book);
         return  bookDto;
     }
@@ -53,10 +58,10 @@ public class BookServiceImpl implements BookService{
     public String deleteBookByTitle(String title) {
          Book book = bookRepository.findByTitle(title);
           if(book !=null){
-              bookRepository.deleteById(book.getId());
+              bookRepository.delete(book);
           }
 
-      return "book by title"+ title + " deleted.";
+      return "book by title "+ title + " deleted.";
     }
 
 
