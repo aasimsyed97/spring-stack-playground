@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/books")
 public class BookController {
@@ -37,6 +39,18 @@ public class BookController {
     }
 
 
+    @GetMapping("getAllBooks")
+    public ResponseEntity<List<BookDto>> getAllBooks(){
+
+          List<BookDto> bookDtoList = bookService.getAllBooks();
+           if(bookDtoList.isEmpty()){
+               return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+           }
+           return new ResponseEntity<>(bookDtoList,HttpStatus.OK);
+
+    }
+
+
      @PostMapping("/save")
     public ResponseEntity<BookDto> saveBook(@RequestBody BookDto bookDto) {
          if (bookDto == null) {
@@ -44,7 +58,7 @@ public class BookController {
          }
          try {
              BookDto savedBook = bookService.saveBook(bookDto);
-             return new ResponseEntity<BookDto>(savedBook,HttpStatus.ACCEPTED);
+             return new ResponseEntity<BookDto>(savedBook,HttpStatus.CREATED);
          } catch (Exception e) {
              return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
          }
