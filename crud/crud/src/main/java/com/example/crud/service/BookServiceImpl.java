@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
 
@@ -31,9 +32,12 @@ public class BookServiceImpl implements BookService{
     @Override
     public List<BookDto> getAllBooks() {
          List<Book> bookList = bookRepository.findAll();
-          List<BookDto> bookDtoList = new ArrayList<>();
-         copyProperties(bookList, bookDtoList);
-        return bookDtoList;
+
+        return bookList.stream().map(book-> {
+               BookDto dto = new BookDto();
+               copyProperties(book, dto);
+               return dto;
+           }).toList();
     }
 
     @Override
