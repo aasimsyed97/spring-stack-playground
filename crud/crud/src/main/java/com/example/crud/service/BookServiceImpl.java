@@ -1,12 +1,14 @@
 package com.example.crud.service;
 
 import com.example.crud.dto.BookDto;
+import com.example.crud.exception.BookNotFoundException;
 import com.example.crud.model.Book;
 import com.example.crud.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
@@ -23,9 +25,13 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public BookDto getBOokByTitle(String title) {
-      Book book =  bookRepository.findByTitle(title);
-      BookDto bookdto = new BookDto();
-       copyProperties(book, bookdto);
+        Optional<Book> bookOptional = bookRepository.findByTitle(title);
+        if (bookOptional.isEmpty()) {
+            throw new BookNotFoundException("Book with title " + title + " not found");
+        }
+        Book book = bookOptional.get();
+        BookDto bookdto = new BookDto();
+        copyProperties(book, bookdto);
         return bookdto;
     }
 
@@ -51,7 +57,7 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public BookDto updateBook(BookDto bookDto) {
-        Book book = bookRepository.findByTitle(bookDto.getTitle());
+        Optional<Book> book = bookRepository.findByTitle(bookDto.getTitle());
         copyProperties(bookDto, book);
         System.out.println(book);
          bookRepository.save(book);
@@ -60,7 +66,7 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public String deleteBookByTitle(String title) {
-         Book book = bookRepository.findByTitle(title);
+         Optional<Book> book = bookRepository.findByTitle(title);
           if(book !=null){
               bookRepository.delete(book);
           }
