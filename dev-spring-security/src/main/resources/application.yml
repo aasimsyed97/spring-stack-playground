@@ -1,0 +1,33 @@
+# ============================================
+# SPRING BOOT CONFIGURATION
+# ============================================
+spring:
+  # DATASOURCE CONFIGURATION
+  datasource:
+    url: jdbc:postgresql://localhost:5432/example-security
+    username: postgres
+    password: groot
+    driver-class-name: org.postgresql.Driver
+  
+  # JPA / HIBERNATE CONFIGURATION
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update       # Options: create, create-drop, update, validate, none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# SERVER CONFIGURATION
+server:
+  port: 9090
+
+# ============================================
+# LOGGING CONFIGURATION (Optional additions)
+# ============================================
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.yourpackage: DEBUG
