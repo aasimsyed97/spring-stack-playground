@@ -21,20 +21,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
-    // Decision Point 1: Constructor Injection vs Field Injection
+
     public JwtAuthenticationFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
 
-    // Decision Point 2: Filtering Logic - The Core Method
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Decision Point 3: Extract JWT Token from Request
+
         final String jwtToken = extractJwtFromRequest(request);
 
         // Decision Point 4: Token Validation Flow
@@ -66,7 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // Decision Point 12: Token Extraction Strategy
-    private String extractJwtFromRequest(HttpServletRequest request) {
+    public String extractJwtFromRequest(HttpServletRequest request) {
         // Check Authorization header first
         String bearerToken = request.getHeader("Authorization");
 
