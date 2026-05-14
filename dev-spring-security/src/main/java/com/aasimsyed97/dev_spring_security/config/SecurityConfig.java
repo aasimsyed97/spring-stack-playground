@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -25,9 +26,9 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(
-        prePostEnabled = true,    // Decision Point 1: Method-level security
+        prePostEnabled = true,    // Decision Point 1: Method-level security  // @PreAuthorize, @PostAuthorize
         securedEnabled = true,    // Decision Point 2: @Secured annotation
-        jsr250Enabled = true      // Decision Point 3: JSR-250 annotations
+        jsr250Enabled = true      // Decision Point 3: JSR-250 annotations, // @RolesAllowed
 )
 public class SecurityConfig {
 

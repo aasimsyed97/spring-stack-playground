@@ -27,6 +27,11 @@ public class JwtUtil {
     @Value("${jwt.refresh.expiration:1440}") //24 hours
     private long refreshExpirationMinutes;
 
+
+    private static final String ISSUER = "DevSpringSecurityExamplesApplication";
+    private static final String ROLES_CLAIM = "roles";
+    private static final String TOKEN_TYPE_CLAIM = "token_type";
+
      private Algorithm getSigningAlgorithm(){
          return  Algorithm.HMAC256(secretKey.getBytes());
 
@@ -36,11 +41,11 @@ public class JwtUtil {
     public String generateAccessToken(UserDetails userDetails) {
         return JWT.create()
                 .withSubject(userDetails.getUsername())
-                .withIssuer("DevSpringSecurityExamplesApplication")
+                .withIssuer(ISSUER)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() +
                         TimeUnit.MINUTES.toMillis(accessExpirationMinutes)))
-                .withClaim("roles", userDetails.getAuthorities().stream()
+                .withClaim(ROLES_CLAIM, userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
                 .sign(getSigningAlgorithm());
@@ -61,7 +66,7 @@ public class JwtUtil {
     public boolean validateToken(String token) {
         try {
             JWTVerifier verifier = JWT.require(getSigningAlgorithm())
-                    .withIssuer("DevSpringSecurityExamplesApplication") // Decision: Validate issuer
+                    .withIssuer(ISSUER) // Decision: Validate issuer
                     .build();
             verifier.verify(token); // This throws exception if invalid
             return !isTokenExpired(token); // Decision: Additional expiration check

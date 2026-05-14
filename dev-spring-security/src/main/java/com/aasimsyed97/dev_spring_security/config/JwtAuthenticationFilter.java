@@ -35,34 +35,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
 
-        final String jwtToken = extractJwtFromRequest(request);
+        try {
+            final String jwtToken = extractJwtFromRequest(request);
 
-        // Decision Point 4: Token Validation Flow
-        if (jwtToken != null && jwtUtil.validateToken(jwtToken)) {
+            if (jwtToken == null) {
+                // No token - let Spring Security handle (might be public endpoint)
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-            // Decision Point 5: Username Extraction and Validation
+            if (!jwtUtil.validateToken(jwtToken)) {
+                handleAuthenticationError(response, "Invalid or expired token");
+                return;
+            }
+
             String username = jwtUtil.extractUsername(jwtToken);
 
-            // Decision Point 6: Security Context Check
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-                // Decision Point 7: Load User Details from Database
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-                // Decision Point 8: Create Authentication Object
+                // Additional check: Is user still active?
+                if (!userDetails.isEnabled()) {
+                    handleAuthenticationError(response, "Account is disabled");
+                    return;
+                }
+
+                // Additional check: Is account locked?
+                if (!userDetails.isAccountNonLocked()) {
+                    handleAuthenticationError(response, "Account is locked");
+                    return;
+                }
+
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                // Decision Point 9: Add Request Details to Authentication
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // Decision Point 10: Set Authentication in Security Context
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
-        }
 
-        // Decision Point 11: Continue Filter Chain
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+
+        } catch (Exception e) {
+            handleAuthenticationError(response, "Authentication failed");
+        }
     }
 
     // Decision Point 12: Token Extraction Strategy
